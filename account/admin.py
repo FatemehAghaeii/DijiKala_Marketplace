@@ -4,12 +4,21 @@ from .models import User
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    # مشخص کردن ستون‌هایی که در لیست کاربران نمایش داده می‌شوند
-    list_display = ('username', 'email', 'role', 'phone_number', 'is_staff')
-    # اضافه کردن فیلتر در سمت راست پنل برای تفکیک راحت فروشنده‌ها و مشتری‌ها
+    # ستون‌هایی که در لیست کاربران پنل ادمین می‌بینی
+    list_display = ('username', 'email', 'role', 'phone_number', 'is_staff', 'is_superuser')
+    
+    # فیلتر سمت راست پنل (برای اینکه با یک کلیک، فروشنده‌ها یا مشتری‌ها جدا شوند)
     list_filter = ('role', 'is_staff', 'is_active')
     
-    # اضافه کردن فیلدهای سفارشی ما (نقش، تلفن، آدرس) به فرم ادمین
+    # قابلیت جستجوی سریع کاربران بر اساس نام کاربری یا شماره تماس
+    search_fields = ('username', 'phone_number', 'email')
+    
+    # اضافه کردن فیلدهای سفارشی به بخش ویرایش کاربران
     fieldsets = UserAdmin.fieldsets + (
-        ('اطلاعات تکمیلی مارکت‌پلیس', {'fields': ('role', 'phone_number', 'address')}),
+        ('اطلاعات تکمیلی مارکت‌پلیس دیجی‌کالا', {'fields': ('role', 'phone_number', 'address')}),
+    )
+    
+    # فیلدهایی که موقع ساختن کاربر جدید از داخل ادمین باید پر شوند
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ('اطلاعات تکمیلی مارکت‌پلیس دیجی‌کالا', {'fields': ('role', 'phone_number', 'address')}),
     )
