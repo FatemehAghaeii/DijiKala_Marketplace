@@ -1,9 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Product
 
+# نمایش صفحه اصلی با قالب استاد
 def home_view(request):
-    # گرفتن تمام محصولات موجود در دیتابیس پستگرس
     products = Product.objects.all().order_by('-created_at')
-    
-    # فرستادن کالاها به قالب فرانت‌اَند استاد برای نمایش دادن
     return render(request, 'home.html', {'products': products})
+
+# نمایش جزئیات محصول (اگر استاد قالب store_detail.html را گذاشته)
+def product_detail_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'store_detail.html', {'product': product})

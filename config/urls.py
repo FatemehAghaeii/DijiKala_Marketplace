@@ -15,10 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from store.views import home_view  # وارد کردن کدی که الان ساختیم
+from django.urls import path, include
+from store.views import home_view, product_detail_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home_view, name='home'),  # آدرس صفحه اصلی سایت
+    path('', home_view, name='home'),  # صفحه اصلی
+    path('product/<int:pk>/', product_detail_view, name='product_detail'),  # جزئیات محصول
+    path('accounts/', include('django.contrib.auth.urls')),  # برای صفحات login و signup استاد
 ]
