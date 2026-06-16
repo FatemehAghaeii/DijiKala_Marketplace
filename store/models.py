@@ -41,3 +41,50 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+class Cart(models.Model):
+    # متصل کردن سبد خرید به کاربر (هر کاربر یک سبد خرید فعال دارد)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='carts',
+        verbose_name="کاربر"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد سبد")
+    is_paid = models.BooleanField(default=False, verbose_name="پرداخت شده؟")
+
+    class Meta:
+        verbose_name = "سبد خرید"
+        verbose_name_plural = "سبدهای خرید"
+
+    def __str__(self):
+        return f"سبد خرید {self.user.username} - {'پرداخت شده' if self.is_paid else 'در جریان'}"
+
+
+class CartItem(models.Model):
+    # متصل شدن به سبد خرید اصلی
+    cart = models.ForeignKey(
+        Cart, 
+        on_delete=models.CASCADE, 
+        related_name='items',
+        verbose_name="سبد خرید مربوطه"
+    )
+    # متصل شدن به محصولی که خریدار انتخاب کرده
+    product = models.ForeignKey(
+        Product, 
+        on_delete=models.CASCADE, 
+        verbose_name="محصول"
+    )
+    # تعداد درخواستی از آن محصول
+    quantity = models.PositiveIntegerField(default=1, verbose_name="تعداد")
+
+    class Meta:
+        verbose_name = "آیتم سبد خرید"
+        verbose_name_plural = "آیتم‌های سبد خرید"
+
+    def __str__(self):
+        return f"{self.quantity} عدد از {self.product.title}"
+    
+    # یک متد باحال برای محاسبه قیمت کل این آیتم (تعداد × قیمت محصول)
+    def get_total_price(self):
+        return self.quantity * self.product.price
