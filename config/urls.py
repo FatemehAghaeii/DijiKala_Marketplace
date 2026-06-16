@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from store.views import home_view  # وارد کردن کدی که الان ساختیم
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home_view, name='home'),  # آدرس صفحه اصلی سایت
 ]
