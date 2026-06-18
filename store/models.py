@@ -12,22 +12,24 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+# مدل فروشگاه برای فروشندگان
+class Store(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='stores', verbose_name="مالک فروشگاه")
+    name = models.CharField(max_length=255, verbose_name="نام فروشگاه")
+    description = models.TextField(verbose_name="توضیحات فروشگاه", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "فروشگاه"
+        verbose_name_plural = "فروشگاه‌ها"
+
+    def __str__(self):
+        return self.name
 
 class Product(models.Model):
-    # اتصال محصول به فروشنده‌ای که در اپ account ساختیم
-    seller = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
-        related_name='products',
-        verbose_name="فروشنده"
-    )
-    # اتصال محصول به دسته‌بندی
-    category = models.ForeignKey(
-        Category, 
-        on_delete=models.PROTECT, 
-        related_name='products',
-        verbose_name="دسته‌بندی"
-    )
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='products', verbose_name="فروشگاه", null=True, blank=True)
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='raw_products', verbose_name="فروشنده")
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products', verbose_name="دسته‌بندی")
     title = models.CharField(max_length=255, verbose_name="نام محصول")
     description = models.TextField(verbose_name="توضیحات محصول")
     price = models.IntegerField(verbose_name="قیمت (تومان)")
@@ -43,13 +45,7 @@ class Product(models.Model):
         return self.title
 
 class Cart(models.Model):
-    # متصل کردن سبد خرید به کاربر (هر کاربر یک سبد خرید فعال دارد)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
-        related_name='carts',
-        verbose_name="کاربر"
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='carts', verbose_name="کاربر")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ایجاد سبد")
     is_paid = models.BooleanField(default=False, verbose_name="پرداخت شده؟")
 
@@ -60,22 +56,9 @@ class Cart(models.Model):
     def __str__(self):
         return f"سبد خرید {self.user.username} - {'پرداخت شده' if self.is_paid else 'در جریان'}"
 
-
 class CartItem(models.Model):
-    # متصل شدن به سبد خرید اصلی
-    cart = models.ForeignKey(
-        Cart, 
-        on_delete=models.CASCADE, 
-        related_name='items',
-        verbose_name="سبد خرید مربوطه"
-    )
-    # متصل شدن به محصولی که خریدار انتخاب کرده
-    product = models.ForeignKey(
-        Product, 
-        on_delete=models.CASCADE, 
-        verbose_name="محصول"
-    )
-    # تعداد درخواستی از آن محصول
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items', verbose_name="سبد خرید مربوطه")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="محصول")
     quantity = models.PositiveIntegerField(default=1, verbose_name="تعداد")
 
     class Meta:
@@ -85,6 +68,5 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity} عدد از {self.product.title}"
     
-    # یک متد باحال برای محاسبه قیمت کل این آیتم (تعداد × قیمت محصول)
     def get_total_price(self):
         return self.quantity * self.product.price
