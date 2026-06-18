@@ -2,12 +2,25 @@
 {% block title %}Payment | DijiKala{% endblock %}
 
 {% block content %}
-<h2>💳 Add Balance</h2>
-
-<form action="{% url 'payment' %}" method="post" class="payment-form">
-    {% csrf_token %}
-    <label for="amount">Enter amount:</label>
-    <input type="number" name="amount" id="amount" min="1" required>
-    <button type="submit" class="btn">Add Balance</button>
-</form>
+<div style="max-width: 500px; margin: 40px auto; text-align: center;">
+    {% if success %}
+        <div class="card" style="padding: 30px; border-top: 4px solid #22a958;">
+            <h2 style="color: #22a958; margin-bottom: 15px;">✅ پرداخت با موفقیت انجام شد</h2>
+            <p style="font-size: 1.2rem; font-weight: bold; color: #333;">{{ thanks_message }}</p>
+            <a href="{% url 'home' %}" class="btn" style="margin-top: 20px; background-color: #0077cc;">بازگشت به صفحه اصلی</a>
+        </div>
+    {% else %}
+        <h2>💳 پرداخت آنلاین دیجی‌کالا</h2>
+        <form action="{% url 'payment' %}" method="post" class="payment-form" style="margin-top: 20px; display: inline-block; text-align: left; width: 100%;">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 15px;">
+                <label for="card_number" style="font-weight: bold; display: block; margin-bottom: 5px;">لطفاً شماره کارت ۱۶ رقمی خود را وارد کنید:</label>
+                <input type="text" name="card_number" id="card_number" placeholder="____-____-____-____" max_length="16" required style="display: block; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; text-align: center; font-size: 1.1rem; letter-spacing: 2px;">
+            </div>
+            
+            <button type="submit" class="btn" style="background-color: #ef4056; width: 100%; padding: 10px; font-size: 1rem;">پرداخت و ثبت نهایی سفارش</button>
+        </form>
+    {% endif %}
+</div>
 {% endblock %}
