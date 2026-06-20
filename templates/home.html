@@ -27,17 +27,21 @@
                     <span style="font-weight: bold; color: #ef4056; font-size: 1.1rem;">{{ product.price }} تومان</span>
                     
                     {% if product.stock > 0 %}
-                        <span style="font-size: 0.8rem; color: #22a958; background: #e8f7ee; padding: 3px 8px; border-radius: 4px;">موجود در انبار ({{ product.stock }})</span>
+                        <span style="font-size: 0.8rem; color: #22a958; background: #e8f7ee; padding: 3px 8px; border-radius: 4px;">موجود ({{ product.stock }})</span>
                     {% else %}
                         <span style="font-size: 0.8rem; color: #ef4056; background: #fff0f1; padding: 3px 8px; border-radius: 4px; font-weight: bold;">اتمام موجودی ❌</span>
                     {% endif %}
                 </div>
 
                 {% if user.is_authenticated %}
-                    {% if product.stock > 0 %}
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn" style="background-color: #0077cc; width: 100%; text-align: center; display: block; padding: 8px; border-radius: 6px; color: white; text-decoration: none; font-weight: bold;">افزودن به سبد خرید</a>
+                    {% if user.is_superuser or user.role == 'ADMIN' or product.seller == user %}
+                        <a href="{% url 'delete_product' product.id %}" class="btn" style="background-color: #ef4056; width: 100%; text-align: center; display: block; padding: 8px; border-radius: 6px; color: white; text-decoration: none; font-weight: bold;">❌ حذف این کالا</a>
                     {% else %}
-                        <button class="btn" disabled style="background-color: #ccc; width: 100%; padding: 8px; border-radius: 6px; color: #666; border: none; font-weight: bold; cursor: not-allowed;">ناموجود</button>
+                        {% if product.stock > 0 %}
+                            <a href="{% url 'add_to_cart' product.id %}" class="btn" style="background-color: #0077cc; width: 100%; text-align: center; display: block; padding: 8px; border-radius: 6px; color: white; text-decoration: none; font-weight: bold;">افزودن به سبد خرید</a>
+                        {% else %}
+                            <button class="btn" disabled style="background-color: #ccc; width: 100%; padding: 8px; border-radius: 6px; color: #666; border: none; font-weight: bold; cursor: not-allowed;">ناموجود</button>
+                        {% endif %}
                     {% endif %}
                 {% else %}
                     <a href="{% url 'login' %}" style="display: block; text-align: center; color: #0077cc; font-size: 0.9rem; text-decoration: none; font-weight: bold;">برای خرید وارد شوید</a>

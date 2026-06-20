@@ -12,7 +12,8 @@ from store.views import (
     create_store,
     checkout,
     signup_view,
-    add_product_view,  # اضافه شد
+    add_product_view,
+    delete_product_view,  # ۱. ایمپورت تابع حذف
 )
 
 urlpatterns = [
@@ -32,5 +33,8 @@ urlpatterns = [
     path('seller-panel/', seller_panel_view, name='seller_panel'),
     path('customer-panel/', customer_panel_view, name='customer_panel'),
     path('create-store/', create_store, name='create_store'),
-    path('seller-panel/add-product/', add_product_view, name='add_product'),  # مسیر دکمه سبز رنگ
+    path('seller-panel/add-product/', add_product_view, name='add_product'),
+    
+    # ۲. ثبت نام مسیر اصلی حذف محصول که تمپلیت به دنبال آن می‌گردد:
+    path('product/delete/<int:pk>/', delete_product_view, name='delete_product'),
 ]
