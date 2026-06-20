@@ -119,3 +119,9 @@ AUTH_USER_MODEL = 'account.User'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# هدایت کاربر به صفحه اصلی بعد از لاگین موفق
+LOGIN_REDIRECT_URL = 'home'
+
+# هدایت کاربر به صفحه اصلی بعد از خروج از حساب
+LOGOUT_REDIRECT_URL = 'home'
