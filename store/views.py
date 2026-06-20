@@ -8,12 +8,10 @@ def home_view(request):
     categories = Category.objects.all()
     products = Product.objects.all().order_by('-created_at')
     
-    # فیلتر دسته‌بندی
     category_slug = request.GET.get('category')
     if category_slug and category_slug != 'all':
         products = products.filter(category__slug=category_slug)
         
-    # باکس جستجو
     search_query = request.GET.get('search')
     if search_query:
         products = products.filter(title__icontains=search_query)
@@ -24,13 +22,12 @@ def home_view(request):
         'current_category': category_slug
     })
 
-# ۲. صفحه ساخت اکانت جدید (Sign In در منطق شما)
+# ۲. صفحه ساخت اکانت جدید
 def signup_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            # تشخیص خودکار ادمین اصلی سیستم
             if user.username.lower() == 'admin':
                 user.role = 'ADMIN'
                 user.is_staff = True
@@ -63,7 +60,7 @@ def add_to_cart(request, product_id):
             
     return redirect('cart')
 
-# ۵. صفحه نمایش سبد خرید (cart)
+# ۵. صفحه نمایش سبد خرید
 @login_required(login_url='/accounts/login/')
 def cart_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user, is_paid=False)
@@ -102,7 +99,7 @@ def payment_view(request):
     total_price = sum(item.quantity * item.product.price for item in cart_items)
     return render(request, 'payment.html', {'cart': cart, 'total': total_price, 'success': False})
 
-# ۸. مدیریت فروشگاه و افزودن/حذف کالا توسط فروشنده
+# ۸. مدیریت فروشگاه توسط فروشنده
 @login_required(login_url='/accounts/login/')
 def seller_panel_view(request):
     if request.user.role != 'SELLER':
@@ -110,6 +107,14 @@ def seller_panel_view(request):
     stores = Store.objects.filter(owner=request.user)
     return render(request, 'seller_panel.html', {'stores': stores})
 
+# ۹. مدیریت پنل مشتری (اضافه شد)
+@login_required(login_url='/accounts/login/')
+def customer_panel_view(request):
+    if request.user.role != 'CUSTOMER':
+        return redirect('home')
+    return render(request, 'customer_panel.html')
+
+# ۱۰. ایجاد فروشگاه جدید
 @login_required(login_url='/accounts/login/')
 def create_store(request):
     if request.method == 'POST' and request.user.role == 'SELLER':
@@ -118,6 +123,7 @@ def create_store(request):
         Store.objects.create(owner=request.user, name=name, description=description)
     return redirect('seller_panel')
 
+# ۱۱. افزودن محصول توسط فروشنده
 @login_required(login_url='/accounts/login/')
 def add_product_view(request):
     if request.user.role != 'SELLER':
@@ -143,6 +149,7 @@ def add_product_view(request):
     stores = Store.objects.filter(owner=request.user)
     return render(request, 'add_product.html', {'categories': categories, 'stores': stores})
 
+# ۱۲. حذف محصول
 @login_required(login_url='/accounts/login/')
 def delete_product_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -150,5 +157,6 @@ def delete_product_view(request, pk):
         product.delete()
     return redirect('home')
 
+# ۱۳. هدایت به پرداخت
 def checkout(request):
     return redirect('payment')

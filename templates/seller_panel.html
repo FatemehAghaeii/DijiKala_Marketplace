@@ -1,20 +1,46 @@
 {% extends 'base.html' %}
-{% block title %}Seller Panel | DijiKala{% endblock %}
+{% block title %}پنل فروشندگان | دیجی‌کالا{% endblock %}
 
 {% block content %}
-<h2>👨‍💼 Seller Panel</h2>
+<div style="direction: rtl; text-align: right; font-family: inherit;">
+    <h2 style="color: #333; margin-bottom: 20px;">👨‍💼 پنل مدیریت فروشندگان (Seller Panel)</h2>
 
-<a href="{% url 'create_store' %}" class="btn">+ Create New Store</a>
+    <div class="card" style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px; max-width: 500px;">
+        <h3 style="color: #ef4056; margin-bottom: 15px;">🏪 راه‌اندازی مغازه و فروشگاه جدید</h3>
+        
+        <form action="{% url 'create_store' %}" method="POST">
+            {% csrf_token %}
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555;">نام فروشگاه شما:</label>
+                <input type="text" name="name" placeholder="مثلاً: فروشگاه دیجیتال علی" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.95rem;">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555;">توضیحات کوتاه فروشگاه:</label>
+                <textarea name="description" placeholder="در مورد محصولات مغازه خود کمی بنویسید..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.95rem; height: 80px; resize: none;"></textarea>
+            </div>
+            
+            <button type="submit" class="btn" style="background-color: #0077cc; width: 100%; padding: 10px; font-size: 1rem; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: bold;">🚀 ثبت و ساخت فروشگاه</button>
+        </form>
+    </div>
 
-<div class="card-grid" style="margin-top: 20px;">
-    {% for store in stores %}
-        <div class="card">
-            <h3>{{ store.name }}</h3>
-            <p>{{ store.description|truncatewords:15 }}</p>
-            <a href="{% url 'store_detail' store.id %}" class="btn">Manage Store</a>
-        </div>
-    {% empty %}
-        <p>You have no stores yet.</p>
-    {% endfor %}
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+    <h3 style="margin-bottom: 15px; color: #333;">🏪 لیست مغازه‌های فعال شما:</h3>
+    <div class="card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+        {% for store in stores %}
+            <div class="card" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <h4 style="font-size: 1.2rem; color: #222; margin-bottom: 8px;">🏪 {{ store.name }}</h4>
+                    <p style="color: #666; font-size: 0.9rem; line-height: 1.4; margin-bottom: 15px;">{{ store.description|default:"توضیحاتی ثبت نشده است." }}</p>
+                </div>
+                <a href="{% url 'add_product' %}" class="btn" style="background-color: #22a958; text-align: center; display: block; padding: 8px; border-radius: 6px; color: white; text-decoration: none; font-weight: bold;">📦 مدیریت و افزودن کالا</a>
+            </div>
+        {% empty %}
+            <div style="grid-column: 1/-1; color: #888; font-weight: bold; background: #fff; padding: 25px; border-radius: 12px; text-align: center; border: 1px dashed #ccc;">
+                شما هنوز هیچ فروشگاهی ثبت نکرده‌اید! از فرم بالا اولین مغازه خود را بسازید. 🏬
+            </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

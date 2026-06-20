@@ -42,7 +42,10 @@
                         <a href="{% url 'cart' %}" style="text-decoration: none; color: #333; font-weight: bold; font-size: 1rem; margin-right: 10px;">🛒 سبد خرید</a>
                     {% endif %}
                     
-                    <a href="{% url 'logout' %}" style="text-decoration: none; color: #ef4056; font-weight: bold; margin-right: 10px;">خروج</a>
+                    <form action="{% url 'logout' %}" method="post" style="display: inline; margin-right: 10px;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; color: #ef4056; font-weight: bold; cursor: pointer; font-size: 1rem; font-family: inherit; padding: 0;">خروج</button>
+                    </form>
                 {% else %}
                     <a href="{% url 'login' %}" style="text-decoration: none; color: #ef4056; font-weight: bold; font-size: 1rem;">ورود (Sign In)</a>
                     <a href="{% url 'signup' %}" style="text-decoration: none; color: #333; font-weight: bold; font-size: 1rem;">ثبت‌نام (Sign Up)</a>
