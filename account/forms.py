@@ -12,7 +12,7 @@ class CustomUserCreationForm(UserCreationForm):
     admin_secret_code = forms.CharField(
         required=False, 
         label="کد اختصاصی ادمین (فقط برای ثبت‌نام ادمین)",
-        widget=forms.TextInput(attrs={'placeholder': 'اگر ادمین هستید کلمه admin را وارد کنید'})
+        widget=forms.PasswordInput()  #  تغییر به پسورد اینپوت برای پنهان شدن کاراکترها موقع تایپ
     )
 
     class Meta(UserCreationForm.Meta):
