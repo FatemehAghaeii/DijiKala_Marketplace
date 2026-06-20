@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings # اضافه شد
+from django.conf.urls.static import static # اضافه شد
 from store.views import (
     home_view,
     product_detail_view,
@@ -13,7 +15,7 @@ from store.views import (
     checkout,
     signup_view,
     add_product_view,
-    delete_product_view,  # ۱. ایمپورت تابع حذف
+    delete_product_view,
 )
 
 urlpatterns = [
@@ -34,7 +36,9 @@ urlpatterns = [
     path('customer-panel/', customer_panel_view, name='customer_panel'),
     path('create-store/', create_store, name='create_store'),
     path('seller-panel/add-product/', add_product_view, name='add_product'),
-    
-    # ۲. ثبت نام مسیر اصلی حذف محصول که تمپلیت به دنبال آن می‌گردد:
     path('product/delete/<int:pk>/', delete_product_view, name='delete_product'),
 ]
+
+# اتصال پوشه رسانه به سرور جنگو در حالت توسعه (DEBUG = True)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

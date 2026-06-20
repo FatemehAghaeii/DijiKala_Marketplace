@@ -125,3 +125,7 @@ LOGIN_REDIRECT_URL = 'home'
 
 # هدایت کاربر به صفحه اصلی بعد از خروج از حساب
 LOGOUT_REDIRECT_URL = 'home'
+
+# تنظیمات فایل‌های رسانه (تصاویر محصولات)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

@@ -6,7 +6,7 @@
     <h2 style="color: #333; margin-bottom: 20px;">📦 افزودن کالا به مغازه</h2>
 
     <div class="card" style="background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-        <form action="{% url 'add_product' %}" method="POST">
+        <form action="{% url 'add_product' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div style="margin-bottom: 15px;">
@@ -30,6 +30,11 @@
             <div style="margin-bottom: 15px;">
                 <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555;">نام یا عنوان محصول:</label>
                 <input type="text" name="title" placeholder="مثلاً: کرم مرطوب‌کننده دست غزل" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.95rem;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #555;">تصویر محصول:</label>
+                <input type="file" name="image" accept="image/*" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 8px; font-size: 0.95rem; background: #fdfdfd;">
             </div>
 
             <div style="margin-bottom: 15px;">

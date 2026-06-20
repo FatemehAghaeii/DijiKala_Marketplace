@@ -135,13 +135,15 @@ def add_product_view(request):
         description = request.POST.get('description')
         price = request.POST.get('price')
         stock = request.POST.get('stock')
+        image = request.FILES.get('image') # 📸 دریافت فایل عکس آپلود شده
         
         store = get_object_or_404(Store, id=store_id, owner=request.user)
         category = get_object_or_404(Category, id=category_id)
         
         Product.objects.create(
             store=store, seller=request.user, category=category,
-            title=title, description=description, price=price, stock=stock
+            title=title, description=description, price=price, stock=stock,
+            image=image # ✨ ذخیره عکس در دیتابیس
         )
         return redirect('seller_panel')
     
