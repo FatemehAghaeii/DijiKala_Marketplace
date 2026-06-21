@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Product, Cart, CartItem, Category, Store
 from account.forms import CustomUserCreationForm
 
-# ۱. صفحه اصلی با نوار جستجو و دسته‌بندی‌ها
+#  صفحه اصلی با نوار جستجو و دسته‌بندی‌ها
 def home_view(request):
     categories = Category.objects.all()
     products = Product.objects.all().order_by('-created_at')
@@ -22,7 +22,7 @@ def home_view(request):
         'current_category': category_slug
     })
 
-# ۲. صفحه ساخت اکانت جدید
+# صفحه ساخت اکانت جدید
 def signup_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -38,12 +38,12 @@ def signup_view(request):
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
-# ۳. صفحه جزئیات کالا
+#  صفحه جزئیات کالا
 def product_detail_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
     return render(request, 'store_detail.html', {'product': product})
 
-# ۴. افزودن کالا به سبد خرید
+#  افزودن کالا به سبد خرید
 @login_required(login_url='/accounts/login/')
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -60,7 +60,7 @@ def add_to_cart(request, product_id):
             
     return redirect('cart')
 
-# ۵. صفحه نمایش سبد خرید
+#  صفحه نمایش سبد خرید
 @login_required(login_url='/accounts/login/')
 def cart_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user, is_paid=False)
@@ -68,14 +68,14 @@ def cart_view(request):
     total_price = sum(item.quantity * item.product.price for item in cart_items)
     return render(request, 'cart.html', {'cart_items': cart_items, 'total': total_price})
 
-# ۶. حذف آیتم از سبد خرید
+# حذف آیتم از سبد خرید
 @login_required(login_url='/accounts/login/')
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     cart_item.delete()
     return redirect('cart')
 
-# ۷. صفحه پرداخت آنلاین و کسر از موجودی انبار
+#  صفحه پرداخت آنلاین و کسر از موجودی انبار
 @login_required(login_url='/accounts/login/')
 def payment_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user, is_paid=False)
@@ -99,7 +99,7 @@ def payment_view(request):
     total_price = sum(item.quantity * item.product.price for item in cart_items)
     return render(request, 'payment.html', {'cart': cart, 'total': total_price, 'success': False})
 
-# ۸. مدیریت فروشگاه توسط فروشنده
+#  مدیریت فروشگاه توسط فروشنده
 @login_required(login_url='/accounts/login/')
 def seller_panel_view(request):
     if request.user.role != 'SELLER':
@@ -107,14 +107,14 @@ def seller_panel_view(request):
     stores = Store.objects.filter(owner=request.user)
     return render(request, 'seller_panel.html', {'stores': stores})
 
-# ۹. مدیریت پنل مشتری (اضافه شد)
+#  مدیریت پنل مشتری (اضافه شد)
 @login_required(login_url='/accounts/login/')
 def customer_panel_view(request):
     if request.user.role != 'CUSTOMER':
         return redirect('home')
     return render(request, 'customer_panel.html')
 
-# ۱۰. ایجاد فروشگاه جدید
+#  ایجاد فروشگاه جدید
 @login_required(login_url='/accounts/login/')
 def create_store(request):
     if request.method == 'POST' and request.user.role == 'SELLER':
@@ -123,7 +123,7 @@ def create_store(request):
         Store.objects.create(owner=request.user, name=name, description=description)
     return redirect('seller_panel')
 
-# ۱۱. افزودن محصول توسط فروشنده
+#  افزودن محصول توسط فروشنده
 @login_required(login_url='/accounts/login/')
 def add_product_view(request):
     if request.user.role != 'SELLER':
@@ -135,7 +135,7 @@ def add_product_view(request):
         description = request.POST.get('description')
         price = request.POST.get('price')
         stock = request.POST.get('stock')
-        image = request.FILES.get('image') # 📸 دریافت فایل عکس آپلود شده
+        image = request.FILES.get('image') # دریافت فایل عکس آپلود شده
         
         store = get_object_or_404(Store, id=store_id, owner=request.user)
         category = get_object_or_404(Category, id=category_id)
@@ -143,7 +143,7 @@ def add_product_view(request):
         Product.objects.create(
             store=store, seller=request.user, category=category,
             title=title, description=description, price=price, stock=stock,
-            image=image # ✨ ذخیره عکس در دیتابیس
+            image=image #  ذخیره عکس در دیتابیس
         )
         return redirect('seller_panel')
     
@@ -151,7 +151,7 @@ def add_product_view(request):
     stores = Store.objects.filter(owner=request.user)
     return render(request, 'add_product.html', {'categories': categories, 'stores': stores})
 
-# ۱۲. حذف محصول
+#  حذف محصول
 @login_required(login_url='/accounts/login/')
 def delete_product_view(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -159,6 +159,6 @@ def delete_product_view(request, pk):
         product.delete()
     return redirect('home')
 
-# ۱۳. هدایت به پرداخت
+#  هدایت به پرداخت
 def checkout(request):
     return redirect('payment')
